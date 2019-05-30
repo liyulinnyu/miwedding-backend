@@ -123,7 +123,7 @@ module.exports = {
                 return new Error(`No such user found`);
             }
             
-            const match = password === user.password;
+            const match = await bcrypt.compare(password, user.password);
             
             if (match) {
                 // get token
@@ -148,8 +148,19 @@ module.exports = {
     getOneWedding: async (args, req) => {
         return nestedSingleWedding(args.weddingId);
     },
-    getRecommendWedding: async (args, req) => {
-        /*wait */
+    getRecommendedWedding: async (args, req) => {
+        
+        const weddings = await Wedding.aggregate([
+            {
+                $project : { likes_count: {$size: { "$ifNull": [ "$likeUsers", [] ] } } }
+            }, 
+            {   
+                $sort: {"likes_count":-1}
+            },
+            { $limit : 6 }
+        ]);
+        const arr = weddings.map(item => item._id);
+        return nestedMultipleWedding(arr);
     }, 
 
     getCoordinateWedding: async () => {
@@ -287,8 +298,8 @@ module.exports = {
             country: args.input.country,
             state: args.input.state,
             city: args.input.city,
-            long: args.input.long,
-            lati: args.input.lati,
+            long: args.input.long || '',
+            lati: args.input.lati || '',
             backgroundImg: args.input.backgroundImg,
             weddingTitle: args.input.weddingTitle.toLowerCase(),
             price: parseFloat(args.input.price),
@@ -343,11 +354,11 @@ module.exports = {
             if (await User.findOne({email: args.input.email})) {
                 return 'please use another email';
             } else {
-
+                const hashedPassword = await bcrypt.hash(args.input.password,12);
                 const user = new User({
                     username: args.input.username,
                     email: args.input.email,
-                    password: args.input.password,
+                    password: hashedPassword,
                     comments: [],
                     savedWedding: [],
                     createdWedding: [],

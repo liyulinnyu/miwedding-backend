@@ -22,8 +22,8 @@ module.exports = buildSchema(`
         likeUsers: [User!]!
         dislikeUsers: [User!]!
         saveUsers: [User!]!
-        long: String!
-        lati: String!
+        long: String
+        lati: String
     }
 
 
@@ -80,8 +80,8 @@ module.exports = buildSchema(`
         weddingType: String!
         designer: String!
         customContent: String!
-        long: String!
-        lati: String!
+        long: String
+        lati: String
     }
 
     input UpdateWeddingInput {
@@ -121,7 +121,7 @@ module.exports = buildSchema(`
         login(email: String!, password: String!): AuthUser!
         getOneWedding(weddingId: String!): Wedding!
         getCoordinateWedding: [Wedding!]!
-        getRecommendWedding(num: Int!): [Wedding!]!
+        getRecommendedWedding: [Wedding!]!
         getWeddingComments(weddingId: String!, num: Int!, offset: Int!): [Comment!]!
         getUser(userId: String!): User!
         getSavedWedding(userId: String!): User!

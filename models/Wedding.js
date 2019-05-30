@@ -37,12 +37,10 @@ const WeddingSchema = new Schema({
         required: true
     },
     long: {
-        type: String,
-        required: true
+        type: String
     },
     lati: {
-        type: String,
-        required: true
+        type: String
     },
     weddingDate: {
         type: Date,
